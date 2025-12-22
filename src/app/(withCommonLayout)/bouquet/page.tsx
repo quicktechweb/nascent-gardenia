@@ -356,7 +356,7 @@ const handleBookNow = (type: string) => {
   <div className="hidden md:flex w-1/5 max-w-3xl sticky top-0 self-start z-20">
     <div className="p-12 space-y-6 mt-40 text-sm">
       <h3 className="text-lg font-bold mb-6">Index</h3>
-      <p className="font-semibold">Room Type</p>
+      <p className="font-semibold">Bouquet Type</p>
       <div className="space-y-4">
         {roomsdata.map((room, i) => (
           <div
@@ -412,14 +412,16 @@ const handleBookNow = (type: string) => {
         mx-auto
       "
     >
-      <Image
-        src={heroImage || "https://www.mampei.co.jp/wp-content/themes/mampei/assets/img/rooms/fv.webp"}
-        // src="https://www.mampei.co.jp/wp-content/themes/mampei/assets/img/rooms/fv.webp"
-        alt="Hero"
-        fill
-        className="object-cover object-top"
-        priority
-      />
+      {heroImage && (
+  <Image
+    src={heroImage}
+    alt="Hero"
+    fill
+    className="object-cover object-top"
+    priority
+  />
+)}
+
     </div>
 
     {/* Left Curtain (unchanged) */}
@@ -472,7 +474,7 @@ const handleBookNow = (type: string) => {
    <div className="hidden md:flex w-1/5 max-w-3xl sticky top-0 self-start z-20">
     <div className="p-12 space-y-6 mt-40 text-sm  ">
       <h3 className="text-lg font-bold mb-6">Index</h3>
-      <p className="font-semibold">Room Type</p>
+      <p className="font-semibold">Bouquet Type</p>
       <div className="space-y-4">
         {roomsdata.map((room, i) => (
           <div
@@ -626,38 +628,41 @@ const handleBookNow = (type: string) => {
   </div>
 
   {/* Content always visible */}
-  <div className=" text-gray-600">
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 px-4 py-3">
-      <div className="space-y-1">
-        {Object.entries(room.basicInfo).map(([key, value]) => (
+ <div className="text-gray-600">
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 px-4 py-3">
+    <div className="space-y-1">
+      {Object.entries(room.basicInfo)
+        .filter(([key]) => key !== "_id") // skip _id
+        .map(([key, value]) => (
           <p key={key}>
-            <strong>{key}:</strong> {value}
+            <strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong> {value}
           </p>
         ))}
-      </div>
-      <div className="space-y-1">
-        <p>
-          <strong>Room facilities & Amenities:</strong>
-        </p>
-        {room.facilities.map((f, i) => (
-          <p key={i}>{f}</p>
-        ))}
-      </div>
     </div>
-
-    {/* Optional floor plan */}
-    {/* 
-    <div className="w-full h-64 flex justify-center py-4 border-t">
-      <Image
-        src={room.floorPlanImage}
-        alt={`${room.title} Floor Plan`}
-        width={800}
-        height={600}
-        className="object-contain"
-      />
-    </div> 
-    */}
+    <div className="space-y-1">
+      <p>
+        <strong>Room facilities & Amenities:</strong>
+      </p>
+      {room.facilities.map((f, i) => (
+        <p key={i}>{f}</p>
+      ))}
+    </div>
   </div>
+
+  {/* Optional floor plan */}
+  {/*
+  <div className="w-full h-64 flex justify-center py-4 border-t">
+    <Image
+      src={room.floorPlanImage}
+      alt={`${room.title} Floor Plan`}
+      width={800}
+      height={600}
+      className="object-contain"
+    />
+  </div>
+  */}
+</div>
+
 </div>
 
 

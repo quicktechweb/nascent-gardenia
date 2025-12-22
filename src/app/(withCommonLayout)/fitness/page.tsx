@@ -356,7 +356,7 @@ const handleBookNow = (type: string) => {
   <div className="hidden md:flex w-1/5 max-w-3xl sticky top-0 self-start z-20">
     <div className="p-12 space-y-6 mt-40 text-sm">
       <h3 className="text-lg font-bold mb-6">Index</h3>
-      <p className="font-semibold">Room Type</p>
+      <p className="font-semibold">Fitness Type</p>
       <div className="space-y-4">
         {roomsdata.map((room, i) => (
           <div
@@ -412,14 +412,16 @@ const handleBookNow = (type: string) => {
         mx-auto
       "
     >
-      <Image
-        src={heroImage || "https://www.mampei.co.jp/wp-content/themes/mampei/assets/img/rooms/fv.webp"}
-        // src="https://www.mampei.co.jp/wp-content/themes/mampei/assets/img/rooms/fv.webp"
-        alt="Hero"
-        fill
-        className="object-cover object-top"
-        priority
-      />
+      {heroImage && (
+  <Image
+    src={heroImage}
+    alt="Hero"
+    fill
+    className="object-cover object-top"
+    priority
+  />
+)}
+
     </div>
 
     {/* Left Curtain (unchanged) */}
@@ -472,7 +474,7 @@ const handleBookNow = (type: string) => {
    <div className="hidden md:flex w-1/5 max-w-3xl sticky top-0 self-start z-20">
     <div className="p-12 space-y-6 mt-40 text-sm  ">
       <h3 className="text-lg font-bold mb-6">Index</h3>
-      <p className="font-semibold">Room Type</p>
+      <p className="font-semibold">Fitness Type</p>
       <div className="space-y-4">
         {roomsdata.map((room, i) => (
           <div
@@ -572,12 +574,12 @@ const handleBookNow = (type: string) => {
 
   {/* Right: Book Now Button */}
   <div className="flex-shrink-0">
-    <button
+    {/* <button
        onClick={() => handleBookNow(room.roomType)}
       className="px-8 py-3 bg-[#c78436] rounded-full text-black shadow-lg flex items-center gap-2 hover:bg-[#b37730] transition"
     >
       Book Now
-    </button>
+    </button> */}
   </div>
 </div>
 

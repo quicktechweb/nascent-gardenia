@@ -427,31 +427,67 @@ const emptySingleRoom: SingleRoomType = {
         />
       </label>
 
-      <label className="block mt-4">
-        Carousel Images
-        <input
-          type="file"
-          multiple
-          ref={carouselInputRef}
-          className="input-white"
-          onChange={handleCarouselUpload}
-        />
-      </label>
+    <label className="block mt-4 text-gray-700 font-semibold">
+  Carousel Images
+</label>
 
-      <div className="flex flex-wrap mt-2 gap-2">
-        {carouselPreview.map((src, i) => (
-          <div key={i} className="relative">
-            <img src={src} className="w-24 h-24 object-cover rounded" />
-            <button
-              type="button"
-              onClick={() => removeCarouselImage(i)}
-              className="absolute top-0 right-0 bg-red-600 text-white rounded-full w-6 h-6 text-xs"
-            >
-              x
-            </button>
-          </div>
-        ))}
+{/* Upload area */}
+<div
+  onClick={() => carouselInputRef.current.click()}
+  className="mt-2 w-full min-h-[120px] border-2 border-dashed border-[#c78436] rounded-xl flex flex-col items-center justify-center text-gray-400 cursor-pointer hover:border-purple-500 hover:text-purple-600 transition-colors p-6"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-10 w-10 mb-2"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M3 15a4 4 0 014-4h10a4 4 0 110 8H7a4 4 0 01-4-4z"
+    />
+  </svg>
+  <p className="text-sm text-center">
+    Drag & drop images here, or <span className="text-[#c78436] font-semibold">click to upload</span>
+  </p>
+</div>
+
+<input
+  type="file"
+  multiple
+  ref={carouselInputRef}
+  className="hidden"
+  onChange={handleCarouselUpload}
+/>
+
+{/* Preview */}
+{carouselPreview.length > 0 && (
+  <div className="flex flex-wrap mt-4 gap-4">
+    {carouselPreview.map((src, i) => (
+      <div
+        key={i}
+        className="relative group w-28 h-28 rounded-lg overflow-hidden shadow-md border border-gray-200"
+      >
+        <img
+          src={src}
+          alt={`carousel-${i}`}
+          className="w-full h-full object-cover transition-transform duration-300 transform group-hover:scale-105"
+        />
+        <button
+          type="button"
+          onClick={() => removeCarouselImage(i)}
+          className="absolute top-2 right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-90 hover:opacity-100 hover:bg-red-700 transition shadow-md"
+        >
+          ×
+        </button>
       </div>
+    ))}
+  </div>
+)}
+
 
       <label className="block mt-4">
         Facilities

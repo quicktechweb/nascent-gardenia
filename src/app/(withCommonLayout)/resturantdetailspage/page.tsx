@@ -30,6 +30,10 @@ interface Room {
   id: string;
   title: string;
   roomType: string;
+  breakfast: string;
+  lunch: string;
+  dinner: string;
+
   bgColor: string;
   description: string;
   carouselImages: string[];
@@ -86,6 +90,9 @@ const [showModal, setShowModal] = useState(false);
   const [roomshortdescription, setroomshortdescription] = useState<string>("");
   const [herodescription, setherodescription] = useState<string>("");
   const [roomshorttile, setroomshorttile] = useState<string>("");
+  const [breakfasts, setbreakfast] = useState<string>("");
+  const [dinners, setdinner] = useState<string>("");
+  const [lunchs, setlunch] = useState<string>("");
     // const [filteredRooms, setFilteredRooms] = useState([]);
     const [filteredRooms, setFilteredRooms] = useState<Room[]>([]);
 
@@ -168,6 +175,15 @@ useEffect(() => {
       }
       if (res.data.data.length > 0) {
         setherodescription(res.data.data[0].herodescription);
+      }
+      if (res.data.data.length > 0) {
+        setbreakfast(res.data.data[0].roomsdata[0].breakfast);
+      }
+      if (res.data.data.length > 0) {
+        setlunch(res.data.data[0].roomsdata[0].lunch);
+      }
+      if (res.data.data.length > 0) {
+        setdinner(res.data.data[0].roomsdata[0].dinner);
       }
       
     } catch (err) {
@@ -356,7 +372,7 @@ const handleBookNow = (type: string) => {
   <div className="hidden md:flex w-1/5 max-w-3xl sticky top-0 self-start z-20">
     <div className="p-12 space-y-6 mt-40 text-sm">
       <h3 className="text-lg font-bold mb-6">Index</h3>
-      <p className="font-semibold">Room Type</p>
+      <p className="font-semibold">Dining Type</p>
       <div className="space-y-4">
         {roomsdata.map((room, i) => (
           <div
@@ -412,14 +428,16 @@ const handleBookNow = (type: string) => {
         mx-auto
       "
     >
-      <Image
-        src={heroImage || "https://www.mampei.co.jp/wp-content/themes/mampei/assets/img/rooms/fv.webp"}
-        // src="https://www.mampei.co.jp/wp-content/themes/mampei/assets/img/rooms/fv.webp"
-        alt="Hero"
-        fill
-        className="object-cover object-top"
-        priority
-      />
+      {heroImage && (
+  <Image
+    src={heroImage}
+    alt="Hero"
+    fill
+    className="object-cover object-top"
+    priority
+  />
+)}
+
     </div>
 
     {/* Left Curtain (unchanged) */}
@@ -454,6 +472,7 @@ const handleBookNow = (type: string) => {
       <p className="text-base md:text-2xl max-w-2xl text-center mt-4">
        {herodescription}
       </p>
+      
     </motion.div>
     
 
@@ -472,7 +491,7 @@ const handleBookNow = (type: string) => {
    <div className="hidden md:flex w-1/5 max-w-3xl sticky top-0 self-start z-20">
     <div className="p-12 space-y-6 mt-40 text-sm  ">
       <h3 className="text-lg font-bold mb-6">Index</h3>
-      <p className="font-semibold">Room Type</p>
+      <p className="font-semibold">Dining Type</p>
       <div className="space-y-4">
         {roomsdata.map((room, i) => (
           <div
@@ -570,14 +589,27 @@ const handleBookNow = (type: string) => {
     <p className="max-w-2xl">{room.description}</p>
   </div>
 
+ <div className="flex flex-col items-center mt-6 space-y-3">
+  <p className="text-base md:text-2xl text-gray-800">
+    <span className="font-semibold">Breakfast:</span> {breakfasts}
+  </p>
+  <p className="text-base md:text-2xl text-gray-800 -ms-10">
+    <span className="font-semibold">Lunch:</span> {lunchs}
+  </p>
+  <p className="text-base md:text-2xl text-gray-800 -ms-8">
+    <span className="font-semibold">Dinner:</span> {dinners}
+  </p>
+</div>
+
+
   {/* Right: Book Now Button */}
   <div className="flex-shrink-0">
-    <button
+    {/* <button
        onClick={() => handleBookNow(room.roomType)}
       className="px-8 py-3 bg-[#c78436] rounded-full text-black shadow-lg flex items-center gap-2 hover:bg-[#b37730] transition"
     >
       Book Now
-    </button>
+    </button> */}
   </div>
 </div>
 
