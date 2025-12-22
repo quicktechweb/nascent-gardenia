@@ -1,0 +1,74 @@
+"use client";
+import Image from "next/image";
+
+
+export default function Page() {
+  const products = [
+    { name: "Napa Extend", price: 500, image: "https://i.chaldn.com/_mpimage/napa-extend-tablet-665mg-12-tablets?src=https%3A%2F%2Feggyolk.chaldal.com%2Fapi%2FPicture%2FRaw%3FpictureId%3D106090&q=low&v=1" },
+    { name: "Seclo 40", price: 678, image: "data:image/jpeg;base64,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" },
+    { name: "Amoxicillin", price: 600, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTYGQH_2GBtX4nZg-HZw1Upg5VDSra-9YXqA&s" },
+    { name: "Adderall", price: 600, image: "https://i.chaldn.com/_mpimage/napa-extend-tablet-665mg-12-tablets?src=https%3A%2F%2Feggyolk.chaldal.com%2Fapi%2FPicture%2FRaw%3FpictureId%3D106090&q=low&v=1" },
+    { name: "Acetaminop", price: 500, image: "https://media.istockphoto.com/id/157402355/photo/generic-paracetamol-isolated-on-white.jpg?s=612x612&w=0&k=20&c=2E3oCvsuOhbB8jmDmDgIFrPDg_FLyEvp-K0IdvGagaw=" },
+    { name: "Thermometer", price: 300, image: "https://m.media-amazon.com/images/I/61eT2Cpr6lL.jpg" },
+    { name: "Amitriptyl", price: 700, image: "https://www.verywellhealth.com/thmb/NRUcPFT71IqJKIjk19o_5DpwNsw=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-11814718541-1fcfb7a20d86404a97ea2342d1816408.jpg" },
+    { name: "Ativan", price: 550, image: "https://smarthealer.pk/wp-content/uploads/2024/09/Ativan-tablet.webp" },
+  ];
+
+  return (
+    <main className="min-h-screen bg-gray-50 py-10 px-6 mt-16">
+      <div className="container mx-auto px-4">
+        <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">
+          Medicine Store
+        </h1>
+
+        {/* Product Grid */}
+        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {products.map((product, index) => (
+            <div
+              key={index}
+              className="bg-white shadow-md rounded-xl p-4 hover:shadow-xl transition duration-300 flex flex-col justify-between"
+            >
+              {/* Image */}
+              <div className="relative w-full h-40 flex items-center justify-center">
+               <Image
+  src={product.image}
+  alt={product.name}
+  width={160}
+  height={160}
+  className="object-contain"
+/>
+              </div>
+
+              {/* Details */}
+              <div className="mt-3 text-center">
+                <h3 className="text-lg font-semibold text-gray-800 truncate">
+                  {product.name}
+                </h3>
+                <p className="text-blue-600 font-bold mt-1">
+                  Price : TK.{product.price}
+                </p>
+
+                {/* Rating */}
+                <div className="flex justify-center gap-1 mt-2 text-yellow-400">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <span key={i}>★</span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex justify-center gap-3 mt-4">
+                <button className="px-4 py-1 rounded-lg border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition text-sm font-medium">
+                  DETAILS
+                </button>
+                <button className="px-4 py-1 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition text-sm font-medium">
+                  ADD CART
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </main>
+  );
+}

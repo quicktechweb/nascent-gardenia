@@ -1,0 +1,222 @@
+"use client";
+import { ArrowRight } from "lucide-react";
+import Image from "next/image";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+export default function RoomsPage() {
+  const searchParams = useSearchParams();
+
+  const arrival = searchParams.get("arrival"); // YYYY-MM-DD
+  const departure = searchParams.get("departure") || arrival;
+  const guests = Number(searchParams.get("guests") || 1);
+
+  const [rooms, setRooms] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+
+  const toNum = (d) => new Date(d).getTime();
+
+  // ========================= FETCH API =========================
+  useEffect(() => {
+    const loadRooms = async () => {
+      const res = await axios.get("https://nascent.virtualshopbd.com/api/rooms");
+
+      const all = res.data.data.flatMap((i) => i.roomsdata);
+
+      setRooms(all);
+    };
+
+    loadRooms();
+  }, []);
+
+  // ========================= FILTER =========================
+  useEffect(() => {
+    if (!arrival || rooms.length === 0) return;
+
+    const start = toNum(arrival);
+    const end = toNum(departure);
+
+    const f = rooms.filter((room) => {
+      if (room.basicInfo?.capacity < guests) return false;
+
+      return room.availableDates?.some((r) => {
+        const rs = toNum(r.start);
+        const re = toNum(r.end);
+        return start >= rs && end <= re;
+      });
+    });
+
+    setFiltered(f);
+  }, [arrival, departure, rooms, guests]);
+
+  // ========================= CARD =========================
+  const RoomCard = ({ room }) => (
+    <div className="w-full border-b pb-10 pt-6">
+
+      <div className="flex flex-col md:flex-row gap-6">
+
+        {/* IMAGE */}
+        <div className="w-[290px] md:w-[280px] h-[170px]">
+          <Image
+            src={room.carouselImages?.[0]}
+            width={260}
+            height={170}
+            alt={room.title}
+            className="rounded-sm w-full h-full object-cover"
+          />
+        </div>
+
+        {/* RIGHT CONTENT */}
+        <div className="flex flex-col flex-1 mt-4 md:mt-0">
+
+          {/* TITLE */}
+          <h3 className="text-[20px] text-black font-[500]">
+            {room.title}
+          </h3>
+
+          {/* BED TYPES */}
+          <div className="flex flex-wrap items-center gap-2 mt-2 text-black">
+            <button className="border px-3 py-[3px] text-[12px] rounded-sm">
+              {room.basicInfo?.bedType} Beds
+            </button>
+          </div>
+
+          {/* SUB INFO */}
+          <p className="text-[13px] text-gray-700 mt-2">
+            {room.basicInfo?.bedType} Beds • Sleeps {room.basicInfo?.capacity} • {room.basicInfo?.size}
+          </p>
+
+          {/* DESCRIPTION */}
+          <p className="text-[13px] text-gray-600 mt-2 leading-[1.4]">
+            {room.description}
+          </p>
+
+          {/* ROOM DETAILS */}
+          <button className="text-[13px] underline mt-2 font-medium">
+            Room Details
+          </button>
+
+          {/* RATE BLOCKS */}
+          <div className="mt-6 space-y-8">
+
+            {[1, 2, 3].map((r, i) => (
+              <div key={i} className="flex flex-col md:flex-row justify-between border-t pt-4">
+
+                {/* LEFT */}
+                <div>
+                  <h4 className="text-[13px] font-semibold text-[#7a5c3c] tracking-wide">
+                    FESTIVE CELEBRATION
+                  </h4>
+
+                  <ul className="text-[13px] text-gray-700 mt-2 space-y-1">
+                    <li>• Daily breakfast included</li>
+                    <li>• Afternoon tea for two</li>
+                    <li>• Kids activities</li>
+                    <li>• Peninsula Time</li>
+                  </ul>
+
+                  {/* MOBILE PRICE */}
+                  <div className="mt-4 md:hidden text-left">
+                    <p className="font-semibold text-[16px] text-black">CN¥ 2,992</p>
+                    <p className="text-[11px] text-gray-500">
+                      Average Per Night <br /> Excluding taxes
+                    </p>
+                    <button className="mt-3 bg-[#a68a60] text-white text-[12px] px-4 py-2 rounded-sm">
+                      BOOK NOW
+                    </button>
+                  </div>
+                </div>
+
+                {/* DESKTOP PRICE */}
+                <div className="hidden md:block min-w-[150px] text-right">
+                  <p className="font-semibold text-[16px] text-black">CN¥ 2,992</p>
+                  <p className="text-[11px] text-gray-500 leading-tight">
+                    Average Per Night <br /> Excluding taxes
+                  </p>
+                  <button className="mt-3 bg-[#a68a60] text-white text-[12px] px-4 py-2 rounded-sm">
+                    BOOK NOW
+                  </button>
+                </div>
+
+              </div>
+            ))}
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  );
+
+  // ========================= MAIN RETURN =========================
+  return (
+    <div className="w-full min-h-screen bg-[#F8F6F2] flex justify-center py-6">
+      <div className="w-full max-w-7xl mt-20 grid grid-cols-1 lg:grid-cols-3 gap-6 px-4">
+
+        {/* LEFT SIDE */}
+        <div className="lg:col-span-2">
+
+          <h2 className="mt-6 mb-3 text-lg text-black font-semibold">Select Room</h2>
+
+          {/* ========== ALL FILTERED ROOMS ========== */}
+          {filtered.length === 0 ? (
+            <p>No rooms available.</p>
+          ) : (
+            filtered.map((room) => <RoomCard key={room.id} room={room} />)
+          )}
+        </div>
+
+        {/* RIGHT SIDE / SIDEBAR CART */}
+        <div className="space-y-6 hidden md:block w-full max-w-sm text-black mt-10">
+
+          <div className="w-[360px] bg-white shadow-md p-5 rounded-md">
+            <h3 className="text-[16px] mb-2 font-semibold">Your Cart: 1 Item</h3>
+
+            <div className="flex justify-between text-[14px]">
+              <span>Total</span>
+              <span className="font-bold">CNY 3,488.00</span>
+            </div>
+
+            <p className="text-[12px] text-gray-500 mt-1">Including taxes and fees</p>
+
+            <div className="border border-gray-300 p-4 mt-3 rounded-md">
+              <div className="font-bold">Deluxe Suite</div>
+
+              <div className="flex justify-between text-[14px] mt-2">
+                <span>Room Charges</span>
+                <span>CNY 2,911.43</span>
+              </div>
+
+              <div className="flex justify-between text-[14px] mt-1">
+                <span>Service Charge</span>
+                <span>CNY 577</span>
+              </div>
+
+              <div className="flex justify-between text-[14px] mt-1">
+                <span>Stay</span>
+                <span>{arrival} - {departure}</span>
+              </div>
+
+              <div className="flex gap-3 mt-4">
+                <button className="px-4 py-1 border border-gray-400 rounded text-sm">EDIT</button>
+                <button className="px-4 py-1 border border-gray-400 rounded text-sm">REMOVE</button>
+              </div>
+            </div>
+
+            <div className="flex justify-between font-bold text-[16px] mt-4">
+              <span>Total</span>
+              <span>CNY 3,488.00</span>
+            </div>
+
+            <button className="w-full flex items-center justify-center gap-2 bg-[#b89c5a] text-white py-3 rounded-md mt-4 text-sm">
+              CHECKOUT
+              <ArrowRight size={16} />
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,346 @@
+@import "tailwindcss";
+
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+@font-face {
+  font-family: "AiFont";
+  src: url("/fonts/PlayfairDisplay-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "AiFont";
+  src: url("/fonts/PlayfairDisplay-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: "MonroviaModern";
+  src: url("/fonts/Monrovia-ModernSerif.woff2") format("woff2"),
+       url("/fonts/Monrovia-ModernSerif.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Hide all scrollbars */
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+body {
+  overflow-x: hidden;
+  scrollbar-width: none;
+}
+
+
+ /* features  */
+ /* 3D Floating Animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotateX(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotateX(2deg) rotateY(2deg);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Optional: smoother shadow glow for icons */
+.icon-glow {
+  filter: blur(25px) opacity(0.25);
+  transition: opacity 0.5s ease;
+}
+
+.group:hover .icon-glow {
+  opacity: 0.5;
+}
+
+/* offers  */
+.offer-shape {
+  position: relative;
+  border: 2px solid white;
+  border-radius: 6px;
+  background: transparent;
+  display: inline-block;
+  padding: 16px 20px;
+}
+
+/* curved bottom-left tail */
+.offer-shape::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: -2px;
+  width: 32px;
+  height: 18px;
+  border-left: 2px solid white;
+  border-bottom: 2px solid white;
+  border-bottom-left-radius: 50px;
+  background: transparent;
+  transform: translateY(100%) rotate(0deg);
+}
+
+/* features  */
+@media (max-width: 1440px) {
+  section {
+    transform: scale(calc(100vw / 1440));
+  }
+}
+
+
+/* banner part  */
+/* Hide scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Snap alignment */
+.scrollSnapItem {
+  scroll-snap-align: start;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollSnapItem {
+  scroll-snap-align: start;
+}
+
+
+/* restursnt animation  */
+.animate-zoom-move {
+  animation: zoomMove 12s ease-in-out infinite;
+}
+
+@keyframes zoomMove {
+  0% {
+    transform: scale(1) translate(0px, 0px);
+  }
+  50% {
+    transform: scale(1.08) translate(10px, 10px);
+  }
+  100% {
+    transform: scale(1) translate(0px, 0px);
+  }
+}
+
+
+/* dropdown animation  */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out;
+}
+
+
+
+/* reservation pop up  */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(50%) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+
+.input-black {
+  @apply border border-gray-700 p-3 rounded bg-gray-900 text-white placeholder-gray-400 shadow-md focus:outline-none focus:ring-2 focus:ring-yellow-500 w-full;
+}
+
+.input-color {
+  @apply border border-gray-700 p-1 rounded bg-gray-900 shadow-md cursor-pointer;
+}
+
+.btn-gold {
+  @apply bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-5 py-2 rounded shadow-md transition;
+}
+
+.btn-blue {
+  @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded shadow-md transition;
+}
+
+.btn-green {
+  @apply bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2 rounded shadow-md transition;
+}
+
+
+
+/* offer data title  */
+@keyframes goldPulse {
+  0%, 100% {
+    color: #c78436;   /* Original gold */
+    opacity: 1;
+  }
+  50% {
+    color: #f5d89a;   /* Lighter gold highlight */
+    opacity: 0.6;
+  }
+}
+
+.float-letter {
+  display: inline-block;
+  animation: float 2s ease-in-out infinite, goldPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.before\:animate-shimmer::before {
+  content: '';
+  display: block;
+  animation: shimmer 2.5s linear infinite;
+}
+
+
+
+
+/* Ensure translate bar never overlays navbar */
+
+
+/* Ensure translate bar never overlays navbar */
+
+
+/* Translate bar always hidden */
+.goog-te-banner-frame {
+  z-index: -1 !important;
+  display: none !important;
+}
+
+/* ONLY hide Google translate banner */
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Prevent page shifting */
+html {
+  margin-top: 0 !important;
+}
+
+body {
+  top: 0 !important;
+}
+
+.navbar {
+  position: relative;
+  z-index: 9999;
+}
+
+
+/* Hide menu iframe */
+iframe.goog-te-menu-frame {
+  display: none !important;
+}
+
+/* Hide Google branding */
+.goog-logo-link,
+.goog-te-gadget span {
+  display: none !important;
+}
+
+/* ===== FORCE REMOVE GOOGLE TRANSLATE TOP BAR ===== */
+body > iframe[src*="translate.google"] {
+  display: none !important;
+  height: 0 !important;
+  visibility: hidden !important;
+}
+
+.goog-te-banner-frame {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Prevent layout jump */
+html,
+body {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  top: 0 !important;
+}
+
+/* Navbar always on top */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 2147483647; /* max safe */
+}
+
+
+/* invoice  */
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #invoice-print,
+  #invoice-print * {
+    visibility: visible;
+  }
+
+  #invoice-print {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}

@@ -1,0 +1,355 @@
+
+
+
+
+// "use client";
+// import { ArrowRight } from "lucide-react";
+// import Image from "next/image";
+// import { useSearchParams } from "next/navigation";
+// import { useEffect, useState } from "react";
+// import axios from "axios";
+
+// type DateRange = {
+//   start: string;
+//   end: string;
+// };
+
+// type BasicInfo = {
+//   bedType: string;
+//   capacity: number;
+//   size: string;
+// };
+
+// type Room = {
+//   id: string;
+//   title: string;
+//   description: string;
+//   roomType: string;
+//   basicInfo: BasicInfo;
+//   carouselImages: string[];
+//   availableDates: DateRange[];
+// };
+
+// type CartItem = {
+//   roomId: string;
+//   roomTitle: string;
+//   packageId: string;
+//   packageName: string;
+//   price: number;
+//   quantity: number;
+//   arrival: string;
+//   departure: string;
+// };
+
+
+// export default function RoomsPage() {
+//   const searchParams = useSearchParams();
+
+//   const arrival = searchParams.get("arrival"); // YYYY-MM-DD
+//    const departure = searchParams.get("departure") ?? arrival;
+//   const guests = Number(searchParams.get("guests") || 1);
+//   const roomType = searchParams.get("roomType") || ""; // Optional filter
+
+//   const [rooms, setRooms] = useState<Room[]>([]);
+//   const [filteredRooms, setFilteredRooms] = useState<Room[]>([]);
+
+//   const toNum = (d: string) => new Date(d).getTime();
+
+//   const [cart, setCart] = useState<CartItem[]>([]);
+
+// // Load from localStorage
+// useEffect(() => {
+//   const saved = localStorage.getItem("hotel-cart");
+//   if (saved) setCart(JSON.parse(saved));
+// }, []);
+
+// // Save to localStorage
+// useEffect(() => {
+//   localStorage.setItem("hotel-cart", JSON.stringify(cart));
+// }, [cart]);
+
+
+// const addToCart = (room, pkg) => {
+//   const existing = cart.find(
+//     (item) =>
+//       item.roomId === room.id &&
+//       item.packageId === pkg.id &&
+//       item.arrival === arrival &&
+//       item.departure === departure
+//   );
+
+//   if (existing) {
+//     setCart((prev) =>
+//       prev.map((i) =>
+//         i === existing ? { ...i, quantity: i.quantity + 1 } : i
+//       )
+//     );
+//   } else {
+//     const newItem: CartItem = {
+//       roomId: room.id,
+//       roomTitle: room.title,
+//       packageId: pkg.id,
+//       packageName: pkg.name,
+//       price: pkg.price,
+//       quantity: 1,
+//       arrival,
+//       departure,
+//     };
+//     setCart((prev) => [...prev, newItem]);
+//   }
+// };
+
+// const totalPrice = cart.reduce((sum, item) => {
+//   return sum + item.price * item.quantity;
+// }, 0);
+
+
+
+//   // Fetch all rooms
+//   useEffect(() => {
+//     const fetchRooms = async () => {
+//       try {
+//         const res = await axios.get("https://nascent.virtualshopbd.com/api/rooms");
+//         const allRooms: Room[] = res.data.data.flatMap((item: any) => item.roomsdata);
+//         setRooms(allRooms);
+//       } catch (err) {
+//         console.error("Failed to fetch rooms:", err);
+//       }
+//     };
+//     fetchRooms();
+//   }, []);
+
+//   // Filter rooms based on arrival/departure/guests and optional roomType
+//   useEffect(() => {
+//     if (!arrival || rooms.length === 0) return;
+
+//     const userStart = toNum(arrival);
+//     const userEnd = toNum(departure);
+
+//     const filtered = rooms.filter((room) => {
+//       const roomCap = room.basicInfo?.capacity || 0;
+
+//       // ❌ Guest filter
+//       if (roomCap < guests) return false;
+
+//       // ❌ RoomType filter if specified
+//       if (roomType && room.roomType !== roomType) return false;
+
+//       // Date filter
+//       return room.availableDates?.some((range) => {
+//         const roomStart = toNum(range.start);
+//         const roomEnd = toNum(range.end);
+//         return userStart >= roomStart && userEnd <= roomEnd;
+//       });
+//     });
+
+//     setFilteredRooms(filtered);
+//   }, [arrival, departure, guests, roomType, rooms]);
+
+//   // ========================= CARD =========================
+//   const RoomCard = ({ room }) => (
+//   <div className="w-full border-b pb-10 pt-6">
+
+//     <div className="flex flex-col md:flex-row gap-6">
+
+//       {/* IMAGE */}
+//       <div className="w-[290px] md:w-[280px] h-[170px]">
+//         <Image
+//           src={room.carouselImages?.[0]}
+//           width={260}
+//           height={170}
+//           alt={room.title}
+//           className="rounded-sm w-full h-full object-cover"
+//         />
+//       </div>
+
+//       {/* RIGHT CONTENT */}
+//       <div className="flex flex-col flex-1 mt-4 md:mt-0">
+
+//         {/* TITLE */}
+//         <h3 className="text-[20px] text-black font-[500]">
+//           {room.title}
+//         </h3>
+
+//         {/* BED TYPES */}
+//         <div className="flex flex-wrap items-center gap-2 mt-2 text-black">
+//           <button className="border px-3 py-[3px] text-[12px] rounded-sm">
+//             {room.basicInfo?.bedType} Beds
+//           </button>
+//         </div>
+
+//         {/* SUB INFO */}
+//         <p className="text-[13px] text-gray-700 mt-2">
+//           {room.basicInfo?.bedType} Beds • Sleeps {room.basicInfo?.capacity} • {room.basicInfo?.size}
+//         </p>
+
+//         {/* DESCRIPTION */}
+//         <p className="text-[13px] text-gray-600 mt-2 leading-[1.4]">
+//           {room.description}
+//         </p>
+
+//         {/* ROOM DETAILS */}
+//         <button className="text-[13px] underline mt-2 font-medium">
+//           Room Details
+//         </button>
+
+//         {/* PACKAGES & BOOK NOW */}
+//         <div className="mt-6 space-y-8">
+//           {room.packages?.map((pkg) => (
+//             <div key={pkg.id} className="flex flex-col md:flex-row justify-between border-t pt-4">
+
+//               <div>
+//                 <h4 className="text-[13px] font-semibold text-[#7a5c3c] tracking-wide">
+//                   {pkg.name}
+//                 </h4>
+
+//                 <ul className="text-[13px] text-gray-700 mt-2 space-y-1 whitespace-pre-line">
+//                   {pkg.description.split("\n").map((line, i) => (
+//                     <li key={i}>{line}</li>
+//                   ))}
+//                 </ul>
+
+//                 {/* Mobile Price + Button */}
+//                 <div className="mt-4 md:hidden text-left">
+//                   <p className="font-semibold text-[16px] text-black">৳ {pkg.price}</p>
+//                   <p className="text-[11px] text-gray-500">
+//                     Average Per Night <br /> Excluding taxes
+//                   </p>
+//                   <button
+//                     onClick={() => addToCart(room, pkg)}
+//                     className="mt-3 bg-[#a68a60] text-white text-[12px] px-4 py-2 rounded-sm"
+//                   >
+//                     BOOK NOW
+//                   </button>
+//                 </div>
+//               </div>
+
+//               {/* Desktop Price + Button */}
+//               <div className="hidden md:block min-w-[150px] text-right">
+//                 <p className="font-semibold text-[16px] text-black">৳ {pkg.price}</p>
+//                 <p className="text-[11px] text-gray-500 leading-tight">
+//                   Average Per Night <br /> Excluding taxes
+//                 </p>
+//                 <button
+//                   onClick={() => addToCart(room, pkg)}
+//                   className="mt-3 bg-[#a68a60] text-white text-[12px] px-4 py-2 rounded-sm"
+//                 >
+//                   BOOK NOW
+//                 </button>
+//               </div>
+
+//             </div>
+//           ))}
+//         </div>
+
+//       </div>
+//     </div>
+
+//   </div>
+// );
+
+
+//   // ========================= MAIN RETURN =========================
+//   return (
+//     <div className="w-full min-h-screen bg-[#F8F6F2] flex justify-center py-6">
+//       <div className="w-full max-w-7xl mt-20 grid grid-cols-1 lg:grid-cols-3 gap-6 px-4">
+
+//         {/* LEFT SIDE */}
+//         <div className="lg:col-span-2">
+
+//           <h2 className="mt-6 mb-3 text-lg text-black font-semibold">Select Room</h2>
+
+//           {/* ========== ALL FILTERED ROOMS ========== */}
+//           {filteredRooms.length === 0 ? (
+//             <p className="text-red-500 text-5xl font-bold">No rooms available.</p>
+//           ) : (
+//             filteredRooms.map((room) => <RoomCard key={room.id} room={room} />)
+//           )}
+//         </div>
+
+//         {/* RIGHT SIDE / SIDEBAR CART */}
+//         <div className="space-y-6 hidden md:block w-full max-w-sm text-black mt-10">
+
+//           <div className="w-[360px] bg-white shadow-md p-5 rounded-md">
+//             <h3 className="text-[16px] mb-2 font-semibold">
+//   Your Cart: {cart.length} Items
+// </h3>
+
+// {cart.map((item) => (
+//   <div key={item.packageId} className="border p-4 mt-3 rounded-md">
+//     <div className="font-bold">{item.roomTitle}</div>
+//     <div className="text-sm text-gray-600">{item.packageName}</div>
+
+//     <div className="flex justify-between text-[14px] mt-2">
+//       <span>Price</span>
+//       <span>৳ {item.price * item.quantity}</span>
+//     </div>
+
+//     <div className="flex justify-between text-[14px] mt-1">
+//       <span>Stay</span>
+//       <span>{item.arrival} → {item.departure}</span>
+//     </div>
+
+//     {/* quantity section */}
+//     <div className="flex gap-3 mt-3 items-center">
+//       <button
+//         onClick={() =>
+//           setCart((prev) =>
+//             prev.map((i) =>
+//               i === item && i.quantity > 1
+//                 ? { ...i, quantity: i.quantity - 1 }
+//                 : i
+//             )
+//           )
+//         }
+//         className="px-3 py-1 border rounded"
+//       >
+//         -
+//       </button>
+
+//       <span className="px-4 py-1 border rounded">
+//         {item.quantity}
+//       </span>
+
+//       <button
+//         onClick={() =>
+//           setCart((prev) =>
+//             prev.map((i) =>
+//               i === item ? { ...i, quantity: i.quantity + 1 } : i
+//             )
+//           )
+//         }
+//         className="px-3 py-1 border rounded"
+//       >
+//         +
+//       </button>
+
+//       <button
+//         onClick={() =>
+//           setCart((prev) => prev.filter((i) => i !== item))
+//         }
+//         className="px-4 py-1 border rounded"
+//       >
+//         REMOVE
+//       </button>
+//     </div>
+//   </div>
+// ))}
+
+// <div className="flex justify-between font-bold text-[16px] mt-4">
+//   <span>Total</span>
+//   <span>৳ {totalPrice}</span>
+// </div>
+
+
+//             <button className="w-full flex items-center justify-center gap-2 bg-[#b89c5a] text-white py-3 rounded-md mt-4 text-sm">
+//               CHECKOUT
+//               <ArrowRight size={16} />
+//             </button>
+//           </div>
+
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
