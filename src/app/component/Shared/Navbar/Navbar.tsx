@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import LanguageSwitcher from "../../LanguageSwitcher/LanguageSwitcher";
+import MobileLanguageSwitcher from "../../LanguageSwitcher/MobileLanguage";
 interface NavbarProps {
   user: { photoURL: string };
   toggle: boolean;
@@ -242,40 +243,9 @@ useEffect(() => {
     }}
   >
     {/* Button */}
-    <button
-      onClick={() => setOpenLang(!openLang)}
-      className="flex md:hidden items-center gap-2 px-5 py-2 rounded-full bg-[#F8F8F2] text-black font-semibold hover:bg-green-300 transition"
-    >
-      Language88
-      <ChevronDown
-        size={18}
-        className={`transition-transform duration-300 ${
-          openLang ? "rotate-180" : "rotate-0"
-        }`}
-      />
-    </button>
-
-    {/* Dropdown Menu */}
-    <div
-      className={`absolute  bg-backdrop-sm right-0 mt-2 w-44 md:hidden bg-white text-black rounded-xl shadow-xl py-2 z-50 transition-all duration-300 ${
-        openLang
-          ? "opacity-100 translate-y-0"
-          : "opacity-0 translate-y-2 pointer-events-none"
-      }`}
-    >
-      {languages.map((lang) => (
-        <p
-          key={lang}
-          className="px-4 py-2 hover:bg-gray-100 cursor-pointer transition"
-          onClick={() => {
-            console.log("Selected:", lang);
-            setOpenLang(false);
-          }}
-        >
-          {lang}
-        </p>
-      ))}
-    </div>
+   <div className="md:hidden block">
+    <MobileLanguageSwitcher />
+   </div>
   </div>
 
       {/* RIGHT (Desktop only) */}
@@ -488,8 +458,10 @@ useEffect(() => {
     }}
   >
     {/* Button */}
-
-    <LanguageSwitcher/>
+<div className="md:hidden block">
+  <MobileLanguageSwitcher />
+</div>
+    {/* <LanguageSwitcher/> */}
     {/* <button
       onClick={() => setOpenLang(!openLang)}
       className="flex items-center gap-2 px-5 py-2 rounded-full bg-[#F8F8F2] text-black font-semibold hover:bg-green-300 transition"

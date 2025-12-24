@@ -48,6 +48,12 @@ interface RoomObject {
   basicInfo: BasicInfo;
   availableDates: SingleAvailableDate[];
   _id: string;
+packages: {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+}[];
 
   heroImage?: string;
   herotext?: string;
@@ -59,6 +65,8 @@ interface RoomObject {
 
   parentId?: string;
 }
+
+
 
 
 interface RoomData {
@@ -127,6 +135,7 @@ export default function RoomsTable() {
 
       firstRoom: {
         ...editRoom,
+        packages: [...editRoom.packages],
         basicInfo: { ...editRoom.basicInfo },
         availableDates: [...editRoom.availableDates],
         carouselImages: [...editRoom.carouselImages],
@@ -380,7 +389,87 @@ export default function RoomsTable() {
           <input name="roomType" value={editRoom.roomType} onChange={handleEditChange} className="input-white" />
         </div>
 
-        
+        {/* ================= PACKAGES ================= */}
+<div className="col-span-2 mt-6">
+  <h3 className="text-xl font-bold mb-3">Packages</h3>
+
+  {editRoom.packages?.map((pkg, index) => (
+    <div
+      key={pkg.id}
+      className="border rounded-lg p-4 mb-3 grid grid-cols-3 gap-3 relative"
+    >
+      {/* Name */}
+      <input
+        placeholder="Package Name"
+        value={pkg.name}
+        onChange={(e) => {
+          const newPkgs = [...editRoom.packages];
+          newPkgs[index].name = e.target.value;
+          setEditRoom({ ...editRoom, packages: newPkgs });
+        }}
+        className="input-white"
+      />
+
+      {/* Price */}
+      <input
+        type="number"
+        placeholder="Price"
+        value={pkg.price}
+        onChange={(e) => {
+          const newPkgs = [...editRoom.packages];
+          newPkgs[index].price = Number(e.target.value);
+          setEditRoom({ ...editRoom, packages: newPkgs });
+        }}
+        className="input-white"
+      />
+
+      {/* Delete */}
+      <button
+        className="bg-red-500 text-white rounded px-3"
+        onClick={() => {
+          const newPkgs = editRoom.packages.filter((_, i) => i !== index);
+          setEditRoom({ ...editRoom, packages: newPkgs });
+        }}
+      >
+        Delete
+      </button>
+
+      {/* Description */}
+      <textarea
+        className="input-white col-span-3 h-20"
+        placeholder="Package Description"
+        value={pkg.description}
+        onChange={(e) => {
+          const newPkgs = [...editRoom.packages];
+          newPkgs[index].description = e.target.value;
+          setEditRoom({ ...editRoom, packages: newPkgs });
+        }}
+      />
+    </div>
+  ))}
+
+  {/* ➕ Add Package */}
+  <button
+    className="bg-blue-600 text-white px-4 py-2 rounded"
+    onClick={() =>
+      setEditRoom({
+        ...editRoom,
+        packages: [
+          ...editRoom.packages,
+          {
+            id: Date.now().toString(),
+            name: "",
+            description: "",
+            price: 0,
+          },
+        ],
+      })
+    }
+  >
+    + Add Package
+  </button>
+</div>
+
 
         <div className="col-span-2">
           <label>Description</label>
