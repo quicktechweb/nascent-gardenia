@@ -126,6 +126,7 @@ const sidebarItems: SidebarItem[] = [
       { title: "Show About Us", icon: FaDesktop, path: "/admin/dashboard/addaboutus" },
       { title: "Show Whats New", icon: FaPenFancy, path: "/admin/dashboard/addwhatsnew" },
       { title: "Show Contact Us", icon: FaMobileAlt, path: "/admin/dashboard/addcontactus" },
+      { title: "Show Offer", icon: FaMobileAlt, path: "/admin/dashboard/adminspecialofferpost" },
     ],
   },
 ];
