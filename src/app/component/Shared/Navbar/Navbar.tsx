@@ -79,7 +79,7 @@ useEffect(() => {
 
     setMenuItems([
       {
-        title: "Room",
+        title: "Accommodation",
         href: "/detailspage",
         data: roomsRes.data || [],
       },
@@ -438,11 +438,13 @@ useEffect(() => {
       {/* Desktop Book Button */}
    <div className="flex items-center gap-4">
 
-    {/* <LanguageSwitcher/> */}
- <Link href="/nearlocation">
+   <div className="md:block hidden">
+     <LanguageSwitcher/>
+   </div>
+ {/* <Link href="/nearlocation">
   <p className="hover:text-yellow-400 text-[#F8F8F2] text-xl hidden md:block font-bold cursor-pointer">
-    Reach Us
-  </p></Link>
+    Reach Us00
+  </p></Link> */}
 
   {/* Hover + Click Friendly Dropdown */}
   <div
@@ -458,9 +460,9 @@ useEffect(() => {
     }}
   >
     {/* Button */}
-<div className="md:hidden block">
-  <MobileLanguageSwitcher />
-</div>
+ <div className="md:hidden block absolute left-1 top-1/2 -translate-y-1/2">
+    <MobileLanguageSwitcher />
+  </div>
     {/* <LanguageSwitcher/> */}
     {/* <button
       onClick={() => setOpenLang(!openLang)}
@@ -607,11 +609,11 @@ useEffect(() => {
 
 
 
-
+{/* hhhhhh */}
 
       {/* --------------------------- Desktop Sidebar --------------------------- */}
       <aside
-       className={`fixed top-9 left-0 h-full w-72 bg-[#0f3333]
+       className={`fixed top-0 left-0 h-full w-72 bg-[#0f3333]
   transform ${open ? "translate-x-0" : "-translate-x-full"}
   transition-transform duration-500 z-[2001] hidden md:block`}
       >
@@ -636,7 +638,7 @@ useEffect(() => {
    {menuItems.map((item) => (
     <div
       key={item.title}
-      className="menu-item flex justify-between items-center cursor-pointer hover:bg-gray-800 px-3 py-2"
+      className="menu-item mt-6 flex justify-between items-center cursor-pointer hover:bg-gray-800 px-3 py-2"
       onMouseEnter={() => setActiveContent(item.title)}
       onMouseLeave={() => setActiveContent("")}
     >
@@ -651,6 +653,12 @@ useEffect(() => {
  <div className="ms-3 mt-3">
    <Link href="/whatsnew">Whats New</Link>
  </div>
+ <div className="ms-3 mt-3">
+   <Link href="/contactus" className="hover:text-yellow-400">
+        Connect
+      </Link>
+ </div>
+ 
 
   {/* RIGHT SIDE PANEL WITH SMOOTH ANIMATION */}
 
@@ -664,7 +672,7 @@ useEffect(() => {
   onMouseLeave={() => setActiveContent("")}
 >
   {/* Wrapper div for margin-top */}
-  <div className="mt-10">
+  <div className="mt-20">
     {activeContent &&
       menuItems
         .filter((m) => m.title === activeContent)

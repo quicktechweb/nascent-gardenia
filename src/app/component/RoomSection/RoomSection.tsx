@@ -164,7 +164,7 @@ if (!room) {
       <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[40%_25%_35%] gap-6 px-4">
         {/* TEXT */}
         <div className="order-1 lg:order-3 flex flex-col justify-center lg:pr-10">
-          <h1 className="text-[48px] sm:text-[60px] lg:text-[75px] font-serif text-[#2d2926] leading-none mb-6 lg:mb-10">
+          <h1 className="text-[48px] sm:text-[60px] lg:text-[55px] font-serif text-[#2d2926] leading-none mb-6 lg:mb-10">
              {room.title}
           </h1>
 

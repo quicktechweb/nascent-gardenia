@@ -5,6 +5,8 @@ import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, Download, Search, UtensilsCrossed } from "lucide-react";
 import axios from "axios";
+import { FaRegCalendarAlt } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 export default function PremiumGallery() {
   const [query, setQuery] = useState("");
@@ -12,6 +14,16 @@ export default function PremiumGallery() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [images, setImages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showReservation, setShowReservation] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [arrival, setArrival] = useState("");
+  const [departure, setDeparture] = useState("");
+  const [useSingleDate, setUseSingleDate] = useState(true);
+  const [nights, setNights] = useState(1);
+  const [rooms, setRooms] = useState(1);
+  const [guests, setGuests] = useState(1);
+ const router = useRouter();
+
 
   const lightboxRef = useRef<HTMLDivElement | null>(null);
 
@@ -35,6 +47,58 @@ export default function PremiumGallery() {
     [images]
   );
 
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const bannerHeight = 20; // height of your hero/banner in px (adjust if needed)
+      if (window.scrollY > bannerHeight) {
+        setShowReservation(true);
+      } else {
+        setShowReservation(false);
+      }
+    };
+  
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+
+   const [isScrolling, setIsScrolling] = useState(false);
+
+   const normalizeDate = (date: string) => {
+    if (!date) return "";
+    if (date.includes("/")) {
+      const [dd, mm, yyyy] = date.split("/");
+      return `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
+    }
+    return date;
+  };
+
+  const toNum = (date: string) => new Date(date).getTime();
+
+  
+
+
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+
+    const handleScroll = () => {
+      setIsScrolling(true);
+
+      if (timeout) clearTimeout(timeout);
+
+      timeout = setTimeout(() => {
+        setIsScrolling(false);
+      }, 200);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (timeout) clearTimeout(timeout);
+    };
+  }, []);
   // Filtered images by search and tag
   const filtered = useMemo(() => {
     let list = images.slice();
@@ -47,6 +111,17 @@ export default function PremiumGallery() {
     );
     return list;
   }, [query, activeTag, images]);
+
+   const handleSearchsdata = () => {
+    if (!arrival || (!useSingleDate && !departure)) {
+      alert("Please select date(s)!");
+      return;
+    }
+    const a = normalizeDate(arrival);
+    const d = useSingleDate ? a : normalizeDate(departure);
+
+    router.push(`/selectroom?arrival=${a}&departure=${d}&guests=${guests}`);
+  };
 
   const openLightbox = (idx: number) => setLightboxIndex(idx);
   const closeLightbox = () => setLightboxIndex(null);
@@ -66,6 +141,29 @@ export default function PremiumGallery() {
           Explore our finest dishes prepared with passion & creativity.
         </p>
       </div>
+
+      {showReservation && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+          <button
+            onClick={() => setShowModal(true)} 
+            style={{
+              background: isScrolling
+                ? "rgba(199, 132, 54, 0.45)"
+                : "rgba(199, 132, 54, 0.20)",
+              border: "1.5px solid rgba(199, 132, 54, 0.55)",
+              backdropFilter: "blur(6px)",
+              WebkitBackdropFilter: "blur(6px)",
+              boxShadow: isScrolling
+                ? "0 0 18px rgba(199, 132, 54, 0.6)"
+                : "0 0 12px rgba(199, 132, 54, 0.45)",
+              transition: "all 0.3s ease",
+            }}
+            className="px-8 py-3 rounded-full text-white shadow-lg flex items-center gap-2 hover:scale-110 transition-all"
+          >
+            <FaRegCalendarAlt className="text-xl" /> Reservations
+          </button>
+        </div>
+      )}
 
       {/* SEARCH & TAGS */}
       <div className="max-w-[1400px] mx-auto mt-8 sm:mt-12 px-4 sm:px-6">
@@ -188,6 +286,115 @@ export default function PremiumGallery() {
           </motion.div>
         )}
       </AnimatePresence>
+
+          {/* RESERVATION MODAL */}
+   {showModal && (
+  <div className="fixed inset-0 bg-black/50 text-black flex items-center justify-center z-20">
+    <div className="bg-white p-6 rounded-xl max-w-md w-full relative">
+      
+      {/* Close Button */}
+      <button
+        className="absolute top-3 right-3 text-xl font-bold"
+        onClick={() => setShowModal(false)}
+      >
+        &times;
+      </button>
+
+      <h2 className="text-lg font-semibold mb-4">Book a Room</h2>
+
+      {/* Date Mode Toggle */}
+      <div className="mb-4 flex gap-2">
+        <button
+          className={`flex-1 py-2 rounded ${
+            useSingleDate ? "bg-black text-white" : "bg-gray-200"
+          }`}
+          onClick={() => setUseSingleDate(true)}
+        >
+          Single Date
+        </button>
+
+        <button
+          className={`flex-1 py-2 rounded ${
+            !useSingleDate ? "bg-black text-white" : "bg-gray-200"
+          }`}
+          onClick={() => setUseSingleDate(false)}
+        >
+          Double Date
+        </button>
+      </div>
+
+      {/* Arrival Date */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium">Arrival Date</label>
+        <input
+          type="date"
+          value={arrival}
+          onChange={(e) => setArrival(e.target.value)}
+          className="w-full border rounded px-3 py-2 mt-1"
+        />
+      </div>
+
+      {/* Departure Date */}
+      {!useSingleDate && (
+        <div className="mb-4">
+          <label className="block text-sm font-medium">Departure Date</label>
+          <input
+            type="date"
+            value={departure}
+            onChange={(e) => setDeparture(e.target.value)}
+            className="w-full border rounded px-3 py-2 mt-1"
+          />
+        </div>
+      )}
+
+      {/* Nights, Rooms, Guests */}
+      <div className="mb-4 flex gap-2">
+
+        {/* <div className="flex-1">
+          <label className="block text-sm font-medium">Nights</label>
+          <input
+            type="number"
+            min={1}
+            value={nights}
+            onChange={(e) => setNights(Number(e.target.value) || 1)}
+            className="w-full border rounded px-3 py-2 mt-1"
+          />
+        </div> */}
+
+        {/* <div className="flex-1">
+          <label className="block text-sm font-medium">Rooms</label>
+          <input
+            type="number"
+            min={1}
+            value={rooms}
+            onChange={(e) => setRooms(Number(e.target.value) || 1)}
+            className="w-full border rounded px-3 py-2 mt-1"
+          />
+        </div> */}
+
+        <div className="flex-1">
+          <label className="block text-sm font-medium">Guests</label>
+          <input
+            type="number"
+            min={1}
+            value={guests}
+            onChange={(e) => setGuests(Number(e.target.value) || 1)}
+            className="w-full border rounded px-3 py-2 mt-1"
+          />
+        </div>
+      </div>
+
+      {/* Search Button */}
+      <button
+       onClick={handleSearchsdata}
+        className="w-full bg-black text-white py-3 rounded-full font-semibold"
+      >
+        Search Vacancy
+      </button>
+
+    </div>
+  </div>
+)}
     </div>
   );
 }

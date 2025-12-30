@@ -69,7 +69,7 @@ export default function Banner() {
   { icon: <GiIsland size={30} />, label: "Dining", link: "/resturantdetailspage" },
   { icon: <MdFestival size={32} />, label: "Bouquet", link: "/bouquet" },
   { icon: <IoHome size={30} />, label: "Fitness", link: "/fitness" },
-  { icon: <MdDinnerDining size={30} />, label: "Gallery", link: "/gallery-events" },
+  { icon: <MdDinnerDining size={30} />, label: "Gallery", link: "/gallery" },
   { icon: <FaCompass size={30} />, label: "Connect", link: "/contactus" },
 ];
 

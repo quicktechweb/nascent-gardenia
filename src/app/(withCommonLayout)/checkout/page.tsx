@@ -36,8 +36,10 @@ interface Facility {
 export default function CheckoutPage() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedFacilities, setSelectedFacilities] = useState<Facility[]>([]);
-  const [nidFile, setNidFile] = useState<File | null>(null);
-  const [passportFile, setPassportFile] = useState<File | null>(null);
+  // const [nidFile, setNidFile] = useState<File | null>(null);
+  // const [passportFile, setPassportFile] = useState<File | null>(null);
+  const [nidNumber, setNidNumber] = useState("");
+const [passportNumber, setPassportNumber] = useState("");
 
   const [contact, setContact] = useState({ firstName: "", lastName: "", phone: "", email: "" });
   const [address, setAddress] = useState("");
@@ -180,9 +182,6 @@ const handleBookingSubmit = async () => {
       g => g.firstName.trim() !== "" && g.lastName.trim() !== ""
     );
 
-    const nidUrl = nidFile ? await uploadToImgbb(nidFile) : undefined;
-    const passportUrl = passportFile ? await uploadToImgbb(passportFile) : undefined;
-
     const res = await axios.post(
       "https://nascent.virtualshopbd.com/api/booking/create",
       {
@@ -192,8 +191,11 @@ const handleBookingSubmit = async () => {
         contact,
         address,
         specialRequests,
-        nidUrl,
-        passportUrl,
+
+        // ✅ numbers only
+        nidNumber,
+        passportNumber,
+
         roomTotal,
         serviceChargeTotal,
         facilitiesTotal,
@@ -201,23 +203,18 @@ const handleBookingSubmit = async () => {
       }
     );
 
-    // If payment URL exists, redirect to payment
     if (res.data?.success && res.data?.url) {
-      // Open payment page
       window.location.href = res.data.url;
-
-      // OPTIONAL: after successful payment, remove first cart item from localStorage
-      // You may also want to implement a webhook or callback to confirm payment
       return;
     }
 
-    // If no payment URL (payment failed), keep the cart and alert user
     alert("Booking created but payment failed. Please retry payment.");
   } catch (err) {
     console.error("Booking submit error:", err);
     alert("Booking failed! Please try again.");
   }
 };
+
 
 
 
@@ -285,82 +282,34 @@ const handleBookingSubmit = async () => {
               {/* NID Card Upload */}
            <>
       {/* NID Upload */}
-      <div className="flex flex-col">
-        <label className="text-xs font-semibold text-gray-700 mb-1">
-          NID Card Image
-        </label>
+      {/* NID Number */}
+<div className="flex flex-col">
+  <label className="text-xs font-semibold text-gray-700 mb-1">
+    NID Number *
+  </label>
+  <input
+    type="text"
+    placeholder="Enter NID Number"
+    className="w-full border border-gray-300 text-black rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#b79a59] focus:border-[#b79a59] text-sm"
+    value={nidNumber}
+    onChange={(e) => setNidNumber(e.target.value)}
+  />
+</div>
 
-        <label className="cursor-pointer border border-gray-300 text-black border-dashed rounded-md p-4 flex flex-col items-center justify-center hover:border-[#b79a59] hover:bg-gray-50 transition-all">
-          <span className="text-xs text-gray-500">
-            Click to upload NID card
-          </span>
+{/* Passport Number */}
+<div className="flex flex-col">
+  <label className="text-xs font-semibold text-gray-700 mb-1">
+    Passport Number *
+  </label>
+  <input
+    type="text"
+    placeholder="Enter Passport Number"
+    className="w-full border border-gray-300 text-black rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#b79a59] focus:border-[#b79a59] text-sm"
+    value={passportNumber}
+    onChange={(e) => setPassportNumber(e.target.value)}
+  />
+</div>
 
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => {
-              if (e.target.files?.[0]) setNidFile(e.target.files[0]);
-            }}
-          />
-        </label>
-
-        {/* NID Preview */}
-        {nidFile && (
-          <div className="mt-3 relative w-40">
-            <img
-              src={URL.createObjectURL(nidFile)}
-              alt="NID Preview"
-              className="w-full h-32 rounded-md border"
-            />
-            <button
-              className="absolute top-1 right-1 bg-red-500 text-white text-xs px-2 py-1 rounded"
-              onClick={() => setNidFile(null)}
-            >
-              Remove
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Passport Upload */}
-      <div className="flex flex-col ">
-        <label className="text-xs font-semibold text-gray-700 mb-1">
-          Passport Image
-        </label>
-
-        <label className="cursor-pointer border border-gray-300 border-dashed rounded-md p-4 flex flex-col items-center justify-center hover:border-[#b79a59] hover:bg-gray-50 transition-all">
-          <span className="text-xs text-gray-500">
-            Click to upload Passport
-          </span>
-
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => {
-              if (e.target.files?.[0]) setPassportFile(e.target.files[0]);
-            }}
-          />
-        </label>
-
-        {/* Passport Preview */}
-        {passportFile && (
-          <div className="mt-3 relative w-40">
-            <img
-              src={URL.createObjectURL(passportFile)}
-              alt="Passport Preview"
-              className="w-full h-32 rounded-md border"
-            />
-            <button
-              className="absolute top-1 right-1 bg-red-500 text-white text-xs px-2 py-1 rounded"
-              onClick={() => setPassportFile(null)}
-            >
-              Remove
-            </button>
-          </div>
-        )}
-      </div>
     </>
 
             </div>

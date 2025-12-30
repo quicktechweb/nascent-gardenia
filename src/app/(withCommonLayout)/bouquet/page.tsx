@@ -355,7 +355,7 @@ const handleBookNow = (type: string) => {
   {/* Sidebar (unchanged, hidden on mobile) */}
   <div className="hidden md:flex w-1/5 max-w-3xl sticky top-0 self-start z-20">
     <div className="p-12 space-y-6 mt-40 text-sm">
-      <h3 className="text-lg font-bold mb-6">Index</h3>
+      {/* <h3 className="text-lg font-bold mb-6">Index</h3>
       <p className="font-semibold">Bouquet Type</p>
       <div className="space-y-4">
         {roomsdata.map((room, i) => (
@@ -382,7 +382,7 @@ const handleBookNow = (type: string) => {
             </p>
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   </div>
 
@@ -390,14 +390,14 @@ const handleBookNow = (type: string) => {
   <div className="absolute top-28 md:top-32 md:left-56 -left-12  z-30 text-center md:text-left w-full md:w-auto">
     <h1
       style={{ fontFamily: '"Monrovia Modern Serif", serif' }}
-      className="text-4xl md:text-7xl font-normal text-[#1a1a1a]"
+      className="text-4xl ms-16 md:text-7xl font-normal text-[#1a1a1a]"
     >
       {roomheader}
     </h1>
   </div>
 
   {/* HERO SECTION */}
-  <div className="relative mt-16 md:-mt-24 w-full flex justify-center items-center h-[70vh] md:h-screen">
+  <div className="relative mt-16 md:mt-28 w-full flex justify-center items-center h-[70vh] md:h-screen">
 
     {/* Hero Image */}
     <div
@@ -473,7 +473,7 @@ const handleBookNow = (type: string) => {
         {/* Sidebar */}
    <div className="hidden md:flex w-1/5 max-w-3xl sticky top-0 self-start z-20">
     <div className="p-12 space-y-6 mt-40 text-sm  ">
-      <h3 className="text-lg font-bold mb-6">Index</h3>
+      {/* <h3 className="text-lg font-bold mb-6">Index</h3> */}
       <p className="font-semibold">Bouquet Type</p>
       <div className="space-y-4">
         {roomsdata.map((room, i) => (
@@ -552,8 +552,8 @@ const handleBookNow = (type: string) => {
 
 
        <div className="mt-20">
-         <h2 className="font-serif text-6xl">{roomshorttile}</h2>
-        <p className="text-md ms-12 mt-9">{roomshortdescription}</p>
+         <h2 className="font-serif ms-5 text-6xl">{roomshorttile}</h2>
+        <p className="text-md ms-8 mt-9">{roomshortdescription}</p>
        </div>
   {roomsdata.map((room, roomIndex) => (
     <div
@@ -599,14 +599,14 @@ const handleBookNow = (type: string) => {
         </button>
 
         <motion.div
-          className="flex gap-4 overflow-x-auto scrollbar-hide"
-          ref={(el: HTMLDivElement | null) => {
-            if (el) carouselRefs.current[roomIndex] = el;
-          }}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.3 }}
-          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.2 } } }}
+            className="flex gap-4 overflow-x-auto overflow-y-hidden scrollbar-hide snap-x snap-mandatory"
+  ref={(el: HTMLDivElement | null) => {
+    if (el) carouselRefs.current[roomIndex] = el;
+  }}
+  initial="hidden"
+  whileInView="show"
+  viewport={{ once: true, amount: 0.3 }}
+  variants={{ hidden: {}, show: { transition: { staggerChildren: 0.2 } } }}
         >
           {room.carouselImages.map((src, i) => (
             <motion.div

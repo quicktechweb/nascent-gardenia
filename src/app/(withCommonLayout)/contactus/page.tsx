@@ -1,8 +1,9 @@
 "use client";
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { HiOutlineMail, HiOutlinePhone, HiOutlineLocationMarker } from "react-icons/hi";
-import { FaFacebookF, FaInstagram, FaWeixin, FaYoutube } from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaRegCalendarAlt, FaWeixin, FaYoutube } from "react-icons/fa";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 interface FormState {
   name: string;
@@ -15,7 +16,7 @@ interface ModalFormState {
   email: string;
   phone: string;
   country: string;
-  password: string;
+  passportNumber: string;
   nidNumber: string;
    nidFront?: File[];   // <-- Array of files
   nidBack?: File[];
@@ -38,9 +39,18 @@ export default function ContactUsSection() {
   const [form, setForm] = useState<FormState>({ name: "", email: "", message: "" });
   const [modalOpen, setModalOpen] = useState(false);
   const [modalForm, setModalForm] = useState<ModalFormState>({
-    name: "", email: "", phone: "", country: "", password: "", nidNumber: "", nidFront: undefined, nidBack: undefined, passport: undefined
+    name: "", email: "", phone: "", country: "", passportNumber: "", nidNumber: ""
   });
   const [data, setData] = useState<ContactData | null>(null);
+   const [showReservation, setShowReservation] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [arrival, setArrival] = useState("");
+    const [departure, setDeparture] = useState("");
+    const [useSingleDate, setUseSingleDate] = useState(true);
+    const [nights, setNights] = useState(1);
+    const [rooms, setRooms] = useState(1);
+    const [guests, setGuests] = useState(1);
+   const router = useRouter();
 
   useEffect(() => {
     axios.get<ContactData>("https://nascent.virtualshopbd.com/api/contact-data")
@@ -61,58 +71,82 @@ export default function ContactUsSection() {
     setModalForm({ ...modalForm, [e.target.name]: e.target.files[0] });
   };
 
-  const handleModalSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-     
+ const handleModalSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
 
-     const uploadToImgBB = async (files?: File[]) => {
-  if (!files || files.length === 0) return [];
-  
-  const urls: string[] = [];
-  
-  for (const file of files) {
-    const formData = new FormData();
-    formData.append("image", file);
-    const res = await fetch(`https://api.imgbb.com/1/upload?key=ab454291ebee91b49b021ecac51be17c`, {
-      method: "POST",
-      body: formData
+  try {
+    const payload = {
+      name: modalForm.name,
+      email: modalForm.email,
+      phone: modalForm.phone,
+      country: modalForm.country,
+      nidNumber: modalForm.nidNumber,
+      passportNumber: modalForm.passportNumber,
+    };
+
+    await axios.post(
+      "https://nascent.virtualshopbd.com/api/futurecontact/add",
+      payload
+    );
+
+    alert("Form submitted successfully!");
+
+    setModalForm({
+      name: "",
+      email: "",
+      phone: "",
+      country: "",
+      nidNumber: "",
+      passportNumber: "",
     });
-    const data = await res.json();
-    urls.push(data.data.url);
+
+    setModalOpen(false);
+  } catch (err) {
+    console.error(err);
+    alert("Failed to submit form");
   }
-  
-  return urls;
 };
 
-      // Upload images
-      const nidFrontUrl = await uploadToImgBB(modalForm.nidFront);
-      const nidBackUrl = await uploadToImgBB(modalForm.nidBack);
-      const passportUrl = await uploadToImgBB(modalForm.passport);
 
-      // Prepare payload
-      const payload = {
-        name: modalForm.name,
-        email: modalForm.email,
-        phone: modalForm.phone,
-        country: modalForm.country,
-        password: modalForm.password,
-        nidNumber: modalForm.nidNumber,
-        nidFront: nidFrontUrl,
-        nidBack: nidBackUrl,
-        passport: passportUrl,
+   useEffect(() => {
+      const handleScroll = () => {
+        const bannerHeight = 20; // height of your hero/banner in px (adjust if needed)
+        if (window.scrollY > bannerHeight) {
+          setShowReservation(true);
+        } else {
+          setShowReservation(false);
+        }
       };
+    
+      window.addEventListener("scroll", handleScroll);
+      return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+  
+  
+     const [isScrolling, setIsScrolling] = useState(false);
+  
+     const normalizeDate = (date: string) => {
+      if (!date) return "";
+      if (date.includes("/")) {
+        const [dd, mm, yyyy] = date.split("/");
+        return `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
+      }
+      return date;
+    };
+  
+    const toNum = (date: string) => new Date(date).getTime();
 
-      await axios.post("https://nascent.virtualshopbd.com/api/futurecontact/add", payload);
-      alert("Form submitted successfully!");
-      setModalForm({ name: "", email: "", phone: "", country: "", password: "", nidNumber: "", nidFront: undefined, nidBack: undefined, passport: undefined });
-      setModalOpen(false);
-
-    } catch (err) {
-      console.error(err);
-      alert("Failed to submit form");
+     const handleSearchsdata = () => {
+    if (!arrival || (!useSingleDate && !departure)) {
+      alert("Please select date(s)!");
+      return;
     }
+    const a = normalizeDate(arrival);
+    const d = useSingleDate ? a : normalizeDate(departure);
+
+    router.push(`/selectroom?arrival=${a}&departure=${d}&guests=${guests}`);
   };
+  
 
   return (
     <section className="bg-[#e9e0d9] py-24 px-5 min-h-screen relative mt-5">
@@ -126,6 +160,28 @@ export default function ContactUsSection() {
         />
       </div>
 
+   {showReservation && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+          <button
+            onClick={() => setShowModal(true)} 
+            style={{
+              background: isScrolling
+                ? "rgba(199, 132, 54, 0.45)"
+                : "rgba(199, 132, 54, 0.20)",
+              border: "1.5px solid rgba(199, 132, 54, 0.55)",
+              backdropFilter: "blur(6px)",
+              WebkitBackdropFilter: "blur(6px)",
+              boxShadow: isScrolling
+                ? "0 0 18px rgba(199, 132, 54, 0.6)"
+                : "0 0 12px rgba(199, 132, 54, 0.45)",
+              transition: "all 0.3s ease",
+            }}
+            className="px-8 py-3 rounded-full text-white shadow-lg flex items-center gap-2 hover:scale-110 transition-all"
+          >
+            <FaRegCalendarAlt className="text-xl" /> Reservations
+          </button>
+        </div>
+      )}
       {/* Contact + Modal */}
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 mt-24">
         <div className="space-y-6">
@@ -236,92 +292,27 @@ export default function ContactUsSection() {
 
   {/* NID Images */}
   {/* NID Images */}
-<div className="space-y-2 ">
-  <label className="block text-black font-medium">Upload NID Images</label>
+ {/* NID Number */}
   <input
-    type="file"
-    name="nidFront"
-    
-    onChange={(e) => {
-      if (!e.target.files) return;
-     setModalForm(prev => ({
-  ...prev,
-  nidFront: [...((prev.nidFront as File[]) || []), ...Array.from(e.target.files!)]
-}));
-
-    }}
-    accept="image/*"
-    multiple
-    className="w-full p-2 border border-gray-300 text-black rounded-xl bg-white"
+    type="text"
+    name="nidNumber"
+    value={modalForm.nidNumber}
+    onChange={handleModalChange}
+    placeholder="NID Number"
+    className="w-full p-3 rounded-xl border"
+    required
   />
-  <div className="flex gap-2 mt-2 flex-wrap">
-    {modalForm.nidFront && (modalForm.nidFront as File[]).map((file, idx) => (
-      <div key={idx} className="relative">
-        <img
-          src={URL.createObjectURL(file)}
-          alt={`nid-${idx}`}
-          className="w-20 h-20 object-cover rounded-lg border"
-        />
-        <button
-          type="button"
-          onClick={() => {
-            setModalForm(prev => ({
-              ...prev,
-              nidFront: (prev.nidFront as File[]).filter((_, i) => i !== idx)
-            }));
-          }}
-          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center"
-        >
-          &times;
-        </button>
-      </div>
-    ))}
-  </div>
-</div>
 
-{/* Passport Images */}
-<div className="space-y-2">
-  <label className="block text-black font-medium">Upload Passport Images</label>
+  {/* Passport Number */}
   <input
-    type="file"
-    name="passport"
-    onChange={(e) => {
-      if (!e.target.files) return;
-      setModalForm(prev => ({
-  ...prev,
-  passport: [...((prev.passport as File[]) || []), ...Array.from(e.target.files!)]
-}));
-
-      
-    }}
-    accept="image/*"
-    multiple
-    className="w-full p-2 border border-gray-300 text-black rounded-xl bg-white"
+    type="text"
+    name="passportNumber"
+    value={modalForm.passportNumber}
+    onChange={handleModalChange}
+    placeholder="Passport Number"
+    className="w-full p-3 rounded-xl border"
+    required
   />
-  <div className="flex gap-2 mt-2 flex-wrap">
-    {modalForm.passport && (modalForm.passport as File[]).map((file, idx) => (
-      <div key={idx} className="relative">
-        <img
-          src={URL.createObjectURL(file)}
-          alt={`passport-${idx}`}
-          className="w-20 h-20 object-cover rounded-lg border text-black"
-        />
-        <button
-          type="button"
-          onClick={() => {
-            setModalForm(prev => ({
-              ...prev,
-              passport: (prev.passport as File[]).filter((_, i) => i !== idx)
-            }));
-          }}
-          className="absolute -top-2 -right-2  bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center"
-        >
-          &times;
-        </button>
-      </div>
-    ))}
-  </div>
-</div>
 
 
   <button
@@ -335,6 +326,115 @@ export default function ContactUsSection() {
           </div>
         </div>
       )}
+
+        {/* RESERVATION MODAL */}
+   {showModal && (
+  <div className="fixed inset-0 bg-black/50 text-black flex items-center justify-center z-20">
+    <div className="bg-white p-6 rounded-xl max-w-md w-full relative">
+      
+      {/* Close Button */}
+      <button
+        className="absolute top-3 right-3 text-xl font-bold"
+        onClick={() => setShowModal(false)}
+      >
+        &times;
+      </button>
+
+      <h2 className="text-lg font-semibold mb-4">Book a Room</h2>
+
+      {/* Date Mode Toggle */}
+      <div className="mb-4 flex gap-2">
+        <button
+          className={`flex-1 py-2 rounded ${
+            useSingleDate ? "bg-black text-white" : "bg-gray-200"
+          }`}
+          onClick={() => setUseSingleDate(true)}
+        >
+          Single Date
+        </button>
+
+        <button
+          className={`flex-1 py-2 rounded ${
+            !useSingleDate ? "bg-black text-white" : "bg-gray-200"
+          }`}
+          onClick={() => setUseSingleDate(false)}
+        >
+          Double Date
+        </button>
+      </div>
+
+      {/* Arrival Date */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium">Arrival Date</label>
+        <input
+          type="date"
+          value={arrival}
+          onChange={(e) => setArrival(e.target.value)}
+          className="w-full border rounded px-3 py-2 mt-1"
+        />
+      </div>
+
+      {/* Departure Date */}
+      {!useSingleDate && (
+        <div className="mb-4">
+          <label className="block text-sm font-medium">Departure Date</label>
+          <input
+            type="date"
+            value={departure}
+            onChange={(e) => setDeparture(e.target.value)}
+            className="w-full border rounded px-3 py-2 mt-1"
+          />
+        </div>
+      )}
+
+      {/* Nights, Rooms, Guests */}
+      <div className="mb-4 flex gap-2">
+
+        {/* <div className="flex-1">
+          <label className="block text-sm font-medium">Nights</label>
+          <input
+            type="number"
+            min={1}
+            value={nights}
+            onChange={(e) => setNights(Number(e.target.value) || 1)}
+            className="w-full border rounded px-3 py-2 mt-1"
+          />
+        </div> */}
+
+        {/* <div className="flex-1">
+          <label className="block text-sm font-medium">Rooms</label>
+          <input
+            type="number"
+            min={1}
+            value={rooms}
+            onChange={(e) => setRooms(Number(e.target.value) || 1)}
+            className="w-full border rounded px-3 py-2 mt-1"
+          />
+        </div> */}
+
+        <div className="flex-1">
+          <label className="block text-sm font-medium">Guests</label>
+          <input
+            type="number"
+            min={1}
+            value={guests}
+            onChange={(e) => setGuests(Number(e.target.value) || 1)}
+            className="w-full border rounded px-3 py-2 mt-1"
+          />
+        </div>
+      </div>
+
+      {/* Search Button */}
+      <button
+       onClick={handleSearchsdata}
+        className="w-full bg-black text-white py-3 rounded-full font-semibold"
+      >
+        Search Vacancy
+      </button>
+
+    </div>
+  </div>
+)}
     </section>
   );
 }
