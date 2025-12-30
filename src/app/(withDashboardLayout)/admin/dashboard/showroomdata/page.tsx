@@ -176,7 +176,7 @@ export default function RoomsTable() {
           "Facilities",
           "Title ",
           "RoomType ",
-          "Description",
+          // "Description",
           " carouselImages",
           "Actions",
         ].map((h, i) => (
@@ -245,9 +245,9 @@ export default function RoomsTable() {
               {first.roomType}
             </td>
 
-            <td className="px-3 py-3 truncate max-w-[240px]" title={first.description}>
+            {/* <td className="px-3 py-3 truncate max-w-[240px]" title={first.description}>
               {first.description}
-            </td>
+            </td> */}
 
             {/* ===== CAROUSEL IMAGES ===== */}
             <td className="px-3 py-3">

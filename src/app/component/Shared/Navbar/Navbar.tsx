@@ -345,18 +345,25 @@ useEffect(() => {
           </div>
 
           {/* Dropdown Content */}
-          {activeContent === item.title && firstSubItem && firstImage && (
-            <div className="bg-black/70 p-4 rounded-lg mt-3">
-              <Image
-                src={firstImage}
-                width={200}
-                height={150}
-                alt={displayTitle}
-                className="rounded-lg w-full object-cover mb-3"
-              />
-              <p className="text-gray-300">{displayTitle}</p>
-            </div>
-          )}
+        {/* Dropdown Content */}
+{activeContent === item.title && firstSubItem && firstImage && (
+  <Link
+    href={item.href || "/"} // fallback to avoid "#"
+    onClick={() => setMobileDropdown(false)}
+    className="block mt-3 rounded-lg overflow-hidden bg-black/70 hover:bg-gray-800 transition"
+  >
+    <Image
+      src={firstImage}
+      width={200}
+      height={150}
+      alt={displayTitle}
+      className="w-full h-auto object-cover"
+    />
+    <p className="text-gray-300 p-2">{displayTitle}</p>
+  </Link>
+)}
+
+
         </div>
       );
     })}
@@ -364,7 +371,7 @@ useEffect(() => {
     {/* Bottom Links */}
     <div className="ms-1 mt-3 flex flex-col space-y-2">
       <Link href="/aboutus" className="hover:text-yellow-400">
-        About Us
+        About Us88
       </Link>
       <Link href="/whatsnew" className="hover:text-yellow-400">
         Whats New

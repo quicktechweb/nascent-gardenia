@@ -214,7 +214,7 @@ useEffect(() => {
 
   // Room Card
   const RoomCard = ({ room }: { room: Room }) => (
-    <div className="w-full border-b pb-10 pt-6">
+    <div className="w-full border-b border-[#0f3333] md:border-gray-200 pb-10 pt-6">
       <div className="flex flex-col md:flex-row gap-6">
         <div className="w-[290px] md:w-[280px] h-[170px]">
           <Image
@@ -241,7 +241,7 @@ useEffect(() => {
 
           <div className="mt-6 space-y-8">
             {room.packages?.map((pkg) => (
-              <div key={pkg.id} className="flex flex-col md:flex-row justify-between border-t pt-4">
+              <div key={pkg.id} className="flex flex-col md:flex-row justify-between border-t  pt-4">
                 <div>
                   <h4 className="text-[13px] font-semibold text-[#7a5c3c] tracking-wide">{pkg.name}</h4>
                   <ul className="text-[13px] text-gray-700 mt-2 space-y-1 whitespace-pre-line">

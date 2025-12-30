@@ -16,6 +16,12 @@ interface Video {
   createdAt?: string;
 }
 
+interface MobileMenuItem {
+  icon: React.ReactNode;
+  label: string;
+  link: string; // required
+}
+
 // const videoURL =
 //   "https://www.youtube.com/embed/-L8rE3WNCE0?autoplay=1&mute=1&loop=1&playlist=-L8rE3WNCE0&controls=0&modestbranding=1&showinfo=0&rel=0&playsinline=1&vq=hd1080";
 
@@ -73,10 +79,13 @@ export default function Banner() {
   { icon: <FaCompass size={30} />, label: "Connect", link: "/contactus" },
 ];
 
-  const mobileItems = menuItems.map((item) => ({
-    icon: React.cloneElement(item.icon, { size: 26 }),
-    label: item.label.length > 6 ? item.label.slice(0, 6) : item.label, // Shorten label for mobile
-  }));
+
+const mobileItems: MobileMenuItem[] = menuItems.map((item) => ({
+  icon: React.cloneElement(item.icon, { size: 26 }),
+  label: item.label.length > 6 ? item.label.slice(0, 6) : item.label,
+  link: item.link,
+}));
+  
 
   return (
     <section className="relative w-full h-[95vh] overflow-hidden bg-black">
@@ -156,18 +165,24 @@ export default function Banner() {
         {/* MOBILE MENU (3 per row scroll) */}
         <div className="md:hidden w-full overflow-x-auto scrollbar-hide pb-3 relative z-20">
           <div className="flex gap-3 px-2" style={{ scrollSnapType: "x mandatory" }}>
-            {mobileItems.map((item, idx) => (
-              <div
-                key={idx}
-                className="flex-none flex justify-center scrollSnapItem"
-                style={{
-                  scrollSnapAlign: "start",
-                  width: `calc((100% - 2 * 0.75rem) / 3)`, // gap-3
-                }}
-              >
-                <MenuItem icon={item.icon} label={item.label} />
-              </div>
-            ))}
+        {mobileItems.map((item, idx) => 
+  item.link ? (
+    <div
+      key={idx}
+      className="flex-none flex justify-center scrollSnapItem"
+      style={{
+        scrollSnapAlign: "start",
+        width: `calc((100% - 2 * 0.75rem) / 3)`,
+      }}
+    >
+      <Link href={item.link}>
+        <MenuItem icon={item.icon} label={item.label} />
+      </Link>
+    </div>
+  ) : null
+)}
+
+
           </div>
         </div>
 
